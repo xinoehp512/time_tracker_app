@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:time_tracker_app/providers/timer.dart';
 import 'package:time_tracker_app/screens/activity_create_screen.dart';
 import 'package:time_tracker_app/screens/time_track_screen.dart';
 
@@ -12,15 +14,18 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+    return ChangeNotifierProvider(
+      create: (context) => Timer(),
+      child: MaterialApp(
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: TimeTrackScreen(),
+        routes: {
+          ActivityCreateScreen.routeName: (context) => ActivityCreateScreen(),
+        },
       ),
-      home: TimeTrackScreen(),
-      routes: {
-        ActivityCreateScreen.routeName: (context) => ActivityCreateScreen(),
-      },
     );
   }
 }

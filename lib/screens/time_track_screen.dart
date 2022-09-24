@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:time_tracker_app/screens/activity_create_screen.dart';
+import 'package:time_tracker_app/widgets/clock.dart';
 
 class TimeTrackScreen extends StatelessWidget {
   const TimeTrackScreen({super.key});
@@ -11,16 +12,9 @@ class TimeTrackScreen extends StatelessWidget {
       body: Center(
         child: Container(
           padding: EdgeInsets.all(10),
-          child: ElevatedButton(
-            child: Text("Start Activity"),
-            onPressed: () => startActivity(context),
-          ),
+          child: Clock(),
         ),
       ),
     );
-  }
-
-  startActivity(context) {
-    Navigator.of(context).pushNamed(ActivityCreateScreen.routeName);
   }
 }

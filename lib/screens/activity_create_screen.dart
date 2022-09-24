@@ -16,6 +16,7 @@ class _ActivityCreateScreenState extends State<ActivityCreateScreen> {
   final _form = GlobalKey<FormState>();
   var _createNew = true;
   var _activityColor = Colors.red.value;
+  var _selectedActivity = "new";
   String? _activityName;
   @override
   Widget build(BuildContext context) {
@@ -27,92 +28,17 @@ class _ActivityCreateScreenState extends State<ActivityCreateScreen> {
           padding: const EdgeInsets.all(12.0),
           child: Column(
             children: [
-              DropdownButtonFormField(
-                decoration: InputDecoration(
-                  contentPadding:
-                      EdgeInsets.symmetric(horizontal: 10, vertical: 0),
-                  border: OutlineInputBorder(),
-                ),
-                value: "new",
-                items: Activities.activities
-                        .map(
-                          (e) => DropdownMenuItem<String>(
-                            value: e.name,
-                            child: Row(
-                              children: [
-                                CircleAvatar(
-                                  radius: 5,
-                                  backgroundColor: e.color,
-                                ),
-                                SizedBox(width: 5),
-                                Text(e.name),
-                              ],
-                            ),
-                          ),
-                        )
-                        .toList() +
-                    [
-                      /*DropdownMenuItem<String>(
-                    value: "YouTube",
-                    child: Row(
-                      children: [
-                        CircleAvatar(
-                          radius: 5,
-                          backgroundColor: Colors.red,
-                        ),
-                        SizedBox(width: 5),
-                        Text("YouTube"),
-                      ],
-                    ),
-                  ),*/
-                      DropdownMenuItem<String>(
-                        value: "new",
-                        child: Text("Create New Activity"),
-                        enabled: true,
-                      ),
-                    ],
-                onChanged: onSelected,
+              ActivitySelector(
+                onSelected: onSelected,
               ),
               SizedBox(
                 height: 10,
               ),
               if (_createNew)
-                Row(
-                  children: [
-                    SizedBox(
-                      width: 48,
-                      height: 48,
-                      child: OutlinedButton(
-                        child: CircleAvatar(
-                          radius: 10,
-                          backgroundColor: Color(_activityColor),
-                        ),
-                        onPressed: _pickColor,
-                      ),
-                    ),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Expanded(
-                      child: TextFormField(
-                        decoration: InputDecoration(
-                          contentPadding:
-                              EdgeInsets.symmetric(horizontal: 10, vertical: 0),
-                          border: OutlineInputBorder(),
-                          hintText: "Activity Name",
-                        ),
-                        validator: (value) {
-                          if (value == null || value == "") {
-                            return "Enter a value";
-                          }
-                          return null;
-                        },
-                        onSaved: (newValue) {
-                          _activityName = newValue;
-                        },
-                      ),
-                    ),
-                  ],
+                ActivityCreator(
+                  activityColor: _activityColor,
+                  onSaved: setActivityName,
+                  pickColor: _pickColor,
                 ),
               ElevatedButton(
                 onPressed: _submitForm,
@@ -128,12 +54,13 @@ class _ActivityCreateScreenState extends State<ActivityCreateScreen> {
   void onSelected(String? value) {
     setState(() {
       _createNew = value == "new";
+      _selectedActivity = value!;
     });
   }
 
   void _submitForm() {
     if (!_createNew) {
-      Navigator.pop(context);
+      Navigator.pop(context, _selectedActivity);
       return;
     }
     var isValid = _form.currentState!.validate();
@@ -142,7 +69,7 @@ class _ActivityCreateScreenState extends State<ActivityCreateScreen> {
     }
     _form.currentState!.save();
     Activities.addActivity(_activityName!, _activityColor);
-    Navigator.pop(context);
+    Navigator.pop(context, _activityName);
   }
 
   void _pickColor() async {
@@ -153,5 +80,119 @@ class _ActivityCreateScreenState extends State<ActivityCreateScreen> {
     setState(() {
       _activityColor = color ?? _activityColor;
     });
+  }
+
+  void setActivityName(String? value) {
+    _activityName = value;
+  }
+}
+
+class ActivitySelector extends StatelessWidget {
+  final Function(String?) onSelected;
+
+  const ActivitySelector({
+    Key? key,
+    required this.onSelected,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return DropdownButtonFormField(
+      decoration: InputDecoration(
+        contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+        border: OutlineInputBorder(),
+      ),
+      value: "new",
+      items: Activities.activities
+              .map(
+                (e) => DropdownMenuItem<String>(
+                  value: e.name,
+                  child: Row(
+                    children: [
+                      CircleAvatar(
+                        radius: 5,
+                        backgroundColor: e.color,
+                      ),
+                      SizedBox(width: 5),
+                      Text(e.name),
+                    ],
+                  ),
+                ),
+              )
+              .toList() +
+          [
+            /*DropdownMenuItem<String>(
+          value: "YouTube",
+          child: Row(
+            children: [
+              CircleAvatar(
+                radius: 5,
+                backgroundColor: Colors.red,
+              ),
+              SizedBox(width: 5),
+              Text("YouTube"),
+            ],
+          ),
+        ),*/
+            DropdownMenuItem<String>(
+              value: "new",
+              child: Text("Create New Activity"),
+              enabled: true,
+            ),
+          ],
+      onChanged: onSelected,
+    );
+  }
+}
+
+class ActivityCreator extends StatelessWidget {
+  const ActivityCreator({
+    Key? key,
+    required int activityColor,
+    required this.pickColor,
+    required this.onSaved,
+  })  : _activityColor = activityColor,
+        super(key: key);
+
+  final int _activityColor;
+  final VoidCallback pickColor;
+  final Function(String?) onSaved;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        SizedBox(
+          width: 48,
+          height: 48,
+          child: OutlinedButton(
+            child: CircleAvatar(
+              radius: 10,
+              backgroundColor: Color(_activityColor),
+            ),
+            onPressed: pickColor,
+          ),
+        ),
+        SizedBox(
+          width: 10,
+        ),
+        Expanded(
+          child: TextFormField(
+            decoration: InputDecoration(
+              contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+              border: OutlineInputBorder(),
+              hintText: "Activity Name",
+            ),
+            validator: (value) {
+              if (value == null || value == "") {
+                return "Enter a value";
+              }
+              return null;
+            },
+            onSaved: onSaved,
+          ),
+        ),
+      ],
+    );
   }
 }
