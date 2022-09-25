@@ -3,11 +3,23 @@ import 'dart:async' as async;
 import 'package:flutter/material.dart';
 
 class Timer with ChangeNotifier {
-  DateTime? _startTime;
+  final stopwatch = Stopwatch();
+  DateTime? lastStartDate;
+  DateTime? lastEndDate;
+  Duration? lastDuration;
   void startTimer() {
-    _startTime = DateTime.now();
+    stopwatch.start();
+    lastStartDate = DateTime.now();
     async.Timer.periodic(Duration(seconds: 1), (timer) => updateTimer());
     notifyListeners();
+  }
+
+  void endTimer() {
+    lastDuration = stopwatch.elapsed;
+    lastEndDate = DateTime.now();
+
+    stopwatch.stop();
+    stopwatch.reset();
   }
 
   void updateTimer() {
@@ -15,9 +27,9 @@ class Timer with ChangeNotifier {
   }
 
   Duration? get time {
-    if (_startTime == null) {
+    if (stopwatch.elapsedMilliseconds == 0) {
       return null;
     }
-    return DateTime.now().difference(_startTime!);
+    return stopwatch.elapsed;
   }
 }

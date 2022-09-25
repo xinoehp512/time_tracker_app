@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:time_tracker_app/models/activities.dart';
-import 'package:time_tracker_app/popups/color_picker_popup.dart';
+import 'package:time_tracker_app/widgets/popups/color_picker_popup.dart';
 
 class ActivityCreateScreen extends StatefulWidget {
   const ActivityCreateScreen({super.key});

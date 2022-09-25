@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:time_tracker_app/models/activities.dart';
 
 import '../providers/timer.dart';
 import '../screens/activity_create_screen.dart';
@@ -16,6 +17,8 @@ class _ClockState extends State<Clock> {
   @override
   Widget build(BuildContext context) {
     var timer = Provider.of<Timer>(context);
+    var activity =
+        activityName == null ? null : Activities.getActivity(activityName!);
     return timer.time == null
         ? ElevatedButton(
             child: Text("Start Activity"),
@@ -26,7 +29,30 @@ class _ClockState extends State<Clock> {
         : Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(timer.time.toString()),
+              Text(
+                "${timer.time!.inHours > 0 ? "${timer.time!.inHours} hours, " : " "}${timer.time!.inMinutes.remainder(60)} minutes",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                ),
+              ),
+              SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text("Activity: "),
+                  CircleAvatar(
+                    radius: 5,
+                    backgroundColor: activity!.color,
+                  ),
+                  SizedBox(width: 5),
+                  Text(activityName!),
+                ],
+              ),
+              SizedBox(height: 20),
+              ElevatedButton(
+                  onPressed: () => endActivity(activity, timer),
+                  child: Text("End Activity"))
             ],
           );
   }
@@ -37,5 +63,16 @@ class _ClockState extends State<Clock> {
     }
     activityName = name;
     timer.startTimer();
+  }
+
+  endActivity(Activity activity, Timer timer) {
+    timer.endTimer();
+    final log = ActivityLog(
+      activity,
+      timer.lastStartDate!,
+      timer.lastEndDate!,
+      timer.lastDuration!,
+    );
+    ActivitiesLog.addLog(log);
   }
 }
