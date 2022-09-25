@@ -16,48 +16,55 @@ class Activity {
   Activity(this.name, this.color);
 }
 
-class Activities {
-  static List<Activity> activities = [Activity("YouTube", Colors.red)];
-
-  static void addActivity(String activityName, int activityColor) {
-    activities.add(Activity(activityName, Color(activityColor)));
+class Activities with ChangeNotifier {
+  List<Activity> activities = [Activity("YouTube", Colors.red)];
+  List<ActivityLog> activitiesLog = [];
+  void addLog(ActivityLog log) {
+    activitiesLog.add(log);
+    notifyListeners();
   }
 
-  static Activity getActivity(String activityName) {
+  void addActivity(String activityName, int activityColor) {
+    activities.add(Activity(activityName, Color(activityColor)));
+    notifyListeners();
+  }
+
+  void updateActivityLogStartDate(int id, {DateTime? date, TimeOfDay? time}) {
+    var log = activitiesLog.firstWhere((element) => element.id == id);
+    log.startDate = join(
+        date ?? log.startDate, time ?? TimeOfDay.fromDateTime(log.startDate));
+    log.length = log.endDate.difference(log.startDate);
+    notifyListeners();
+  }
+
+  void updateActivityLogEndDate(int id, {DateTime? date, TimeOfDay? time}) {
+    var log = activitiesLog.firstWhere((element) => element.id == id);
+    log.endDate =
+        join(date ?? log.endDate, time ?? TimeOfDay.fromDateTime(log.endDate));
+    log.length = log.endDate.difference(log.startDate);
+    notifyListeners();
+  }
+
+  Activity getActivity(String activityName) {
     return activities.firstWhere((element) => element.name == activityName);
   }
 }
 
-class ActivityLog {
-  Activity activity;
-  DateTime _startDate;
-  DateTime get startDate => _startDate;
-  DateTime _endDate;
-  DateTime get endDate => _endDate;
-  Duration length;
-
-  ActivityLog(this.activity, this._startDate, this._endDate, this.length);
-
-  void setStartDate({DateTime? date, TimeOfDay? time}) {
-    _startDate =
-        join(date ?? startDate, time ?? TimeOfDay.fromDateTime(startDate));
-    length = endDate.difference(startDate);
-  }
-
-  void setEndDate({DateTime? date, TimeOfDay? time}) {
-    _endDate = join(date ?? endDate, time ?? TimeOfDay.fromDateTime(endDate));
-    length = endDate.difference(startDate);
-  }
-
-  DateTime join(DateTime date, TimeOfDay time) {
-    return new DateTime(
-        date.year, date.month, date.day, time.hour, time.minute);
-  }
+DateTime join(DateTime date, TimeOfDay time) {
+  return new DateTime(date.year, date.month, date.day, time.hour, time.minute);
 }
 
-class ActivitiesLog {
-  static List<ActivityLog> activitiesLog = [];
-  static void addLog(ActivityLog log) {
-    activitiesLog.add(log);
+class ActivityLog {
+  static int _nextId = 0;
+  static get nextId {
+    return _nextId++;
   }
+
+  int id = nextId;
+  Activity activity;
+  DateTime startDate;
+  DateTime endDate;
+  Duration length;
+
+  ActivityLog(this.activity, this.startDate, this.endDate, this.length);
 }

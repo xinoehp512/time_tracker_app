@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:time_tracker_app/models/activities.dart';
 import 'package:time_tracker_app/screens/edit_activity_screen.dart';
 
@@ -10,13 +11,15 @@ class ActivityOverviewScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(title: Text("Review Activies")),
-        body: ListView.builder(
-          itemBuilder: (context, index) {
-            var activity = ActivitiesLog.activitiesLog[index];
-            return getCard(context, activity);
-          },
-          itemCount: ActivitiesLog.activitiesLog.length,
-        ));
+        body: Consumer<Activities>(builder: (context, activities, child) {
+          return ListView.builder(
+            itemBuilder: (context, index) {
+              var activity = activities.activitiesLog[index];
+              return getCard(context, activity);
+            },
+            itemCount: activities.activitiesLog.length,
+          );
+        }));
   }
 
   Widget getCard(BuildContext context, ActivityLog e) {

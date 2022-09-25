@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:time_tracker_app/models/activities.dart';
 import 'package:time_tracker_app/widgets/popups/color_picker_popup.dart';
 
@@ -68,7 +69,8 @@ class _ActivityCreateScreenState extends State<ActivityCreateScreen> {
       return;
     }
     _form.currentState!.save();
-    Activities.addActivity(_activityName!, _activityColor);
+    var activities = Provider.of<Activities>(context, listen: false);
+    activities.addActivity(_activityName!, _activityColor);
     Navigator.pop(context, _activityName);
   }
 
@@ -97,13 +99,14 @@ class ActivitySelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var activities = Provider.of<Activities>(context, listen: false);
     return DropdownButtonFormField(
       decoration: InputDecoration(
         contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
         border: OutlineInputBorder(),
       ),
       value: "new",
-      items: Activities.activities
+      items: activities.activities
               .map(
                 (e) => DropdownMenuItem<String>(
                   value: e.name,

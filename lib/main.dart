@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:time_tracker_app/models/activities.dart';
 import 'package:time_tracker_app/providers/timer.dart';
 import 'package:time_tracker_app/screens/activity_create_screen.dart';
 import 'package:time_tracker_app/screens/activity_overview_screen.dart';
@@ -16,8 +17,11 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => Timer(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<Timer>(create: (context) => Timer()),
+        ChangeNotifierProvider<Activities>(create: (context) => Activities()),
+      ],
       child: MaterialApp(
         title: 'Flutter Demo',
         theme: ThemeData(

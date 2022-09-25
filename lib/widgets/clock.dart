@@ -17,8 +17,9 @@ class _ClockState extends State<Clock> {
   @override
   Widget build(BuildContext context) {
     var timer = Provider.of<Timer>(context);
+    var activities = Provider.of<Activities>(context, listen: false);
     var activity =
-        activityName == null ? null : Activities.getActivity(activityName!);
+        activityName == null ? null : activities.getActivity(activityName!);
     return timer.time == null
         ? ElevatedButton(
             child: Text("Start Activity"),
@@ -73,6 +74,8 @@ class _ClockState extends State<Clock> {
       timer.lastEndDate!,
       timer.lastDuration!,
     );
-    ActivitiesLog.addLog(log);
+
+    var activities = Provider.of<Activities>(context, listen: false);
+    activities.addLog(log);
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:time_tracker_app/models/activities.dart';
 import 'package:time_tracker_app/widgets/date_time_selector.dart';
 
@@ -10,6 +11,7 @@ class EditActivityScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var activityLog = ModalRoute.of(context)!.settings.arguments as ActivityLog;
+    var activities = Provider.of<Activities>(context);
     return Scaffold(
       appBar: AppBar(title: Text("Edit Activity")),
       body: Padding(
@@ -31,7 +33,13 @@ class EditActivityScreen extends StatelessWidget {
           ),
           Row(
             children: [
-              DateTimeSelector(activityLog.startDate, activityLog.setStartDate),
+              DateTimeSelector(activityLog.startDate, ({date, time}) {
+                activities.updateActivityLogStartDate(
+                  activityLog.id,
+                  date: date,
+                  time: time,
+                );
+              }),
             ],
           )
         ]),
