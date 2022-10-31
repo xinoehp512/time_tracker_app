@@ -21,11 +21,37 @@ class _ClockState extends State<Clock> {
     var activity =
         activityName == null ? null : activities.getActivity(activityName!);
     return timer.time == null
-        ? ElevatedButton(
-            child: Text("Start Activity"),
-            onPressed: () => Navigator.of(context)
-                .pushNamed(ActivityCreateScreen.routeName)
-                .then((Object? name) => startActivity(name as String?, timer)),
+        ? Column(
+            children: [
+              ElevatedButton(
+                child: Text("Start Activity"),
+                onPressed: () => Navigator.of(context)
+                    .pushNamed(ActivityCreateScreen.routeName)
+                    .then((Object? name) =>
+                        startActivity(name as String?, timer)),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: activities.recentActivities
+                    .map((act) => OutlinedButton(
+                        onPressed: () {
+                          startActivity(act.name, timer);
+                        },
+                        child: Row(
+                          children: [
+                            CircleAvatar(
+                              backgroundColor: act.color,
+                              radius: 5,
+                            ),
+                            SizedBox(width: 5),
+                            Text(
+                              act.name,
+                            ),
+                          ],
+                        )))
+                    .toList(),
+              )
+            ],
           )
         : Column(
             mainAxisAlignment: MainAxisAlignment.center,

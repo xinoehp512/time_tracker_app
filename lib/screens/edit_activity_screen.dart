@@ -33,6 +33,7 @@ class EditActivityScreen extends StatelessWidget {
           ),
           Row(
             children: [
+              Text("Start Date:"),
               DateTimeSelector(activityLog.startDate, ({date, time}) {
                 activities.updateActivityLogStartDate(
                   activityLog.id,
@@ -40,6 +41,23 @@ class EditActivityScreen extends StatelessWidget {
                   time: time,
                 );
               }),
+            ],
+          ),
+          Row(
+            children: [
+              Text("End Date:"),
+              DateTimeSelector(activityLog.endDate, ({date, time}) {
+                activities.updateActivityLogEndDate(
+                  activityLog.id,
+                  date: date,
+                  time: time,
+                );
+              }),
+            ],
+          ),
+          Row(
+            children: [
+              Text("Duration: ${activityLog.length.inMinutes} minutes"),
             ],
           )
         ]),

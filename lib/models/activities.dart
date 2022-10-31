@@ -3,15 +3,7 @@ import 'package:flutter/material.dart';
 class Activity {
   final String name;
   final Color color;
-  int _count = 0;
   Duration _totalTimeSpent = Duration(minutes: 0);
-  get count {
-    return _count;
-  }
-
-  void logActivity() {
-    _count++;
-  }
 
   Activity(this.name, this.color);
 }
@@ -19,9 +11,35 @@ class Activity {
 class Activities with ChangeNotifier {
   List<Activity> activities = [Activity("YouTube", Colors.red)];
   List<ActivityLog> activitiesLog = [];
+
+  void sortActivities() {
+    activitiesLog.sort(
+      (a, b) {
+        if (a.startDate.isBefore(b.startDate)) {
+          return -1;
+        }
+
+        return 1;
+      },
+    );
+  }
+
   void addLog(ActivityLog log) {
     activitiesLog.add(log);
     notifyListeners();
+  }
+
+  List<Activity> get recentActivities {
+    List<Activity> recentActivities = [];
+    sortActivities();
+    for (var activity in activitiesLog.reversed) {
+      if (!recentActivities.contains(activity.activity)) {
+        recentActivities.add(activity.activity);
+      }
+    }
+    return recentActivities.length > 5
+        ? recentActivities.sublist(0, 5)
+        : recentActivities;
   }
 
   void addActivity(String activityName, int activityColor) {
@@ -65,6 +83,14 @@ class ActivityLog {
   DateTime startDate;
   DateTime endDate;
   Duration length;
+
+  TimeOfDay get startTime {
+    return TimeOfDay.fromDateTime(startDate);
+  }
+
+  TimeOfDay get endTime {
+    return TimeOfDay.fromDateTime(endDate);
+  }
 
   ActivityLog(this.activity, this.startDate, this.endDate, this.length);
 }
