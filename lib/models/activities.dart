@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:time_tracker_app/helpers/db_helper.dart';
 
 class Activity {
   final String name;
@@ -6,11 +7,28 @@ class Activity {
   Duration _totalTimeSpent = Duration(minutes: 0);
 
   Activity(this.name, this.color);
+
+  Map<String, Object> toMap() {
+    return {
+      "name": name,
+      "color": color.value,
+    };
+  }
 }
 
 class Activities with ChangeNotifier {
-  List<Activity> activities = [Activity("YouTube", Colors.red)];
+  List<Activity> activities = [];
   List<ActivityLog> activitiesLog = [];
+
+  Future<void> fetchAndSetActivities() async {
+    var activityData = await DBHelper.getData("activities");
+    activities = activityData.map((element) {
+      return Activity(element["name"], Color(element["color"]));
+    }).toList();
+    var logData = await DBHelper.getData("logs");
+    activitiesLog =
+        logData.map((element) => ActivityLog.fromMap(element, this)).toList();
+  }
 
   void sortActivities() {
     activitiesLog.sort(
@@ -26,6 +44,7 @@ class Activities with ChangeNotifier {
 
   void addLog(ActivityLog log) {
     activitiesLog.add(log);
+    DBHelper.insert("logs", log.toMap());
     notifyListeners();
   }
 
@@ -43,7 +62,9 @@ class Activities with ChangeNotifier {
   }
 
   void addActivity(String activityName, int activityColor) {
-    activities.add(Activity(activityName, Color(activityColor)));
+    var activity = Activity(activityName, Color(activityColor));
+    activities.add(activity);
+    DBHelper.insert("activities", activity.toMap());
     notifyListeners();
   }
 
@@ -78,8 +99,8 @@ class ActivityLog {
     return _nextId++;
   }
 
-  int id = nextId;
-  Activity activity;
+  int id = DateTime.now().millisecondsSinceEpoch;
+  Activity activity; //Perhaps refactor such that this is an ID, not direct link
   DateTime startDate;
   DateTime endDate;
   Duration length;
@@ -93,4 +114,24 @@ class ActivityLog {
   }
 
   ActivityLog(this.activity, this.startDate, this.endDate, this.length);
+
+  Map<String, Object> toMap() {
+    return {
+      "id": id,
+      "activity": activity.name,
+      "startDate": startDate.millisecondsSinceEpoch,
+      "endDate": endDate.millisecondsSinceEpoch,
+      "length": length.inSeconds
+    };
+  }
+
+  static ActivityLog fromMap(Map<String, dynamic> map, Activities activities) {
+    var activity = activities.getActivity(map["activity"]);
+    var startDate = DateTime.fromMillisecondsSinceEpoch(map["startDate"]);
+    var endDate = DateTime.fromMillisecondsSinceEpoch(map["endDate"]);
+    var length = Duration(seconds: map["length"]);
+    var log = ActivityLog(activity, startDate, endDate, length);
+    log.id = map["id"];
+    return log;
+  }
 }
