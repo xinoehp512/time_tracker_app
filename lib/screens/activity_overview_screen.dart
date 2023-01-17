@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:time_tracker_app/models/activities.dart';
 import 'package:time_tracker_app/screens/edit_activity_screen.dart';
 
+///Screen for viewing past activities.
 class ActivityOverviewScreen extends StatelessWidget {
   const ActivityOverviewScreen({super.key});
   static const routeName = "/overview-screen";
@@ -29,6 +30,7 @@ class ActivityOverviewScreen extends StatelessWidget {
   }
 }
 
+///On click, takes the user to the edit activity screen.
 class ActivityCard extends StatefulWidget {
   const ActivityCard({
     Key? key,

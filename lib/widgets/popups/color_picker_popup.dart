@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:time_tracker_app/models/colors.dart';
 
+///Prompts the user to pick a color.
 class ColorPickerPopup extends StatelessWidget {
   const ColorPickerPopup({super.key});
 

@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:time_tracker_app/models/activities.dart';
 import 'package:time_tracker_app/widgets/popups/color_picker_popup.dart';
 
+///Screen for creating a new activity.
 class ActivityCreateScreen extends StatefulWidget {
   const ActivityCreateScreen({super.key});
   static const routeName = "/create-screen";

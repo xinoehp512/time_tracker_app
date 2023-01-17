@@ -5,6 +5,7 @@ import 'package:time_tracker_app/models/activities.dart';
 import '../providers/timer.dart';
 import '../screens/activity_create_screen.dart';
 
+//Starts and keeps track of activities.
 class Clock extends StatefulWidget {
   const Clock({super.key});
 
@@ -23,6 +24,7 @@ class _ClockState extends State<Clock> {
     return timer.time == null
         ? Column(
             children: [
+              //Takes the user to the activity create screen.
               ElevatedButton(
                 child: Text("Start Activity"),
                 onPressed: () => Navigator.of(context)
@@ -30,6 +32,7 @@ class _ClockState extends State<Clock> {
                     .then((Object? name) =>
                         startActivity(name as String?, timer)),
               ),
+              //Displays the user's most recently used activities. Clicking on an activity will automatically start it.
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: activities.recentActivities
@@ -53,6 +56,7 @@ class _ClockState extends State<Clock> {
               )
             ],
           )
+        //Displays the amount of time the activity has been active for.
         : Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

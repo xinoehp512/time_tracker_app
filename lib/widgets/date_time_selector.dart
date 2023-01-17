@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+///When clicked, allows the user to edit the displayed time.
 class DateTimeSelector extends StatefulWidget {
   DateTime date;
   Function({DateTime? date, TimeOfDay? time}) setDate;

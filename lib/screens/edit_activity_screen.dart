@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:time_tracker_app/models/activities.dart';
 import 'package:time_tracker_app/widgets/date_time_selector.dart';
 
+///Allows the user to edit past activities.
 class EditActivityScreen extends StatelessWidget {
   const EditActivityScreen({super.key});
   static const routeName = "/edit-activity";

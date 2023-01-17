@@ -6,6 +6,7 @@ import 'package:time_tracker_app/screens/activity_overview_screen.dart';
 import 'package:time_tracker_app/screens/splash_screen.dart';
 import 'package:time_tracker_app/widgets/clock.dart';
 
+///Main screen of the app.
 class TimeTrackScreen extends StatefulWidget {
   const TimeTrackScreen({super.key});
 
@@ -47,6 +48,7 @@ class _TimeTrackScreenState extends State<TimeTrackScreen> {
                       indent: 20,
                       endIndent: 20,
                     ),
+                    //Goes to the activity overview screen.
                     ElevatedButton(
                         onPressed: () {
                           Navigator.pushNamed(
